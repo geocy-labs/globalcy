@@ -33,7 +33,9 @@ def _real_feature_block(frame: pd.DataFrame, prefixes: list[str]) -> np.ndarray:
 class BundleBatch:
     local_features: jnp.ndarray
     invariant_features: jnp.ndarray
+    canonical_invariant_features: jnp.ndarray
     symmetry_features: jnp.ndarray
+    symmetry_reference_features: jnp.ndarray
     weights: jnp.ndarray
     point_ids: np.ndarray
     chart_ids: np.ndarray
@@ -41,6 +43,7 @@ class BundleBatch:
     affine_complex: jnp.ndarray
     metadata: dict[str, Any]
     evaluation_summary: dict[str, Any]
+    symmetry_metadata: dict[str, np.ndarray | list[str] | bool]
 
 
 def load_bundle_batch(bundle_path: str | Path) -> BundleBatch:
@@ -57,7 +60,25 @@ def load_bundle_batch(bundle_path: str | Path) -> BundleBatch:
 
     invariant_features = _real_feature_block(invariants, ["m_"])
     canonical_frame = tables.get("canonical_invariants", invariants).sort_values("point_id").reset_index(drop=True)
-    symmetry_features = _real_feature_block(canonical_frame, ["m_"])
+    canonical_invariant_features = _real_feature_block(canonical_frame, ["m_"])
+
+    orbit_sizes = np.ones((len(points), 1), dtype=np.float32)
+    canonical_keys = np.array([""] * len(points), dtype=object)
+    if "orbits" in tables:
+        orbit_frame = tables["orbits"].sort_values("point_id").reset_index(drop=True)
+        if "orbit_size" in orbit_frame.columns:
+            orbit_sizes = orbit_frame["orbit_size"].to_numpy(dtype=np.float32).reshape(-1, 1)
+        if "canonical_key" in orbit_frame.columns:
+            canonical_keys = orbit_frame["canonical_key"].astype(str).to_numpy()
+    elif "canonical_representatives" in tables:
+        canonical_rep_frame = tables["canonical_representatives"].sort_values("point_id").reset_index(drop=True)
+        if "orbit_size" in canonical_rep_frame.columns:
+            orbit_sizes = canonical_rep_frame["orbit_size"].to_numpy(dtype=np.float32).reshape(-1, 1)
+        if "canonical_key" in canonical_rep_frame.columns:
+            canonical_keys = canonical_rep_frame["canonical_key"].astype(str).to_numpy()
+
+    symmetry_features = np.concatenate([canonical_invariant_features, orbit_sizes], axis=1)
+    symmetry_reference_features = np.concatenate([invariant_features, orbit_sizes], axis=1)
 
     if "sample_weights" in tables:
         weights_frame = tables["sample_weights"].sort_values("point_id").reset_index(drop=True)
@@ -80,7 +101,9 @@ def load_bundle_batch(bundle_path: str | Path) -> BundleBatch:
     return BundleBatch(
         local_features=jnp.asarray(local_features),
         invariant_features=jnp.asarray(invariant_features),
+        canonical_invariant_features=jnp.asarray(canonical_invariant_features),
         symmetry_features=jnp.asarray(symmetry_features),
+        symmetry_reference_features=jnp.asarray(symmetry_reference_features),
         weights=jnp.asarray(weight_array),
         point_ids=points["point_id"].to_numpy(),
         chart_ids=points["chart_id"].to_numpy(),
@@ -88,4 +111,10 @@ def load_bundle_batch(bundle_path: str | Path) -> BundleBatch:
         affine_complex=jnp.asarray(affine_complex),
         metadata=metadata,
         evaluation_summary=tables.get("evaluation_summary", {}),
+        symmetry_metadata={
+            "has_canonical_invariants": "canonical_invariants" in tables,
+            "has_orbits": "orbits" in tables,
+            "orbit_sizes": orbit_sizes[:, 0],
+            "canonical_keys": canonical_keys.tolist(),
+        },
     )

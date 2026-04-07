@@ -35,20 +35,33 @@ def _features_for_model(batch, model_type: str):
     if model_type == "local":
         return batch.local_features, None
     if model_type == "global":
-        return batch.invariant_features, None
-    return batch.symmetry_features, batch.symmetry_features
+        return batch.invariant_features, batch.canonical_invariant_features
+    return batch.symmetry_features, batch.symmetry_reference_features
 
 
 def _transform_for_model(model_type: str):
     if model_type == "local":
         return lambda affine_real: affine_real
-    return lambda affine_real: invariant_features_from_affine(affine_real[: affine_real.shape[0] // 2] + 1j * affine_real[affine_real.shape[0] // 2 :], chart_id=0)
+    if model_type == "global":
+        return lambda affine_real: invariant_features_from_affine(affine_real[: affine_real.shape[0] // 2] + 1j * affine_real[affine_real.shape[0] // 2 :], chart_id=0)
+    return lambda affine_real: jnp.concatenate(
+        [
+            invariant_features_from_affine(
+                affine_real[: affine_real.shape[0] // 2] + 1j * affine_real[affine_real.shape[0] // 2 :],
+                chart_id=0,
+            ),
+            jnp.ones((1,), dtype=jnp.float32),
+        ],
+        axis=0,
+    )
 
 
 def _projective_feature_builder(model_type: str):
     if model_type == "local":
         return lambda homogeneous: homogeneous_to_affine_real(homogeneous, chart_id=0)
-    return homogeneous_to_invariants
+    if model_type == "global":
+        return homogeneous_to_invariants
+    return lambda homogeneous: jnp.concatenate([homogeneous_to_invariants(homogeneous), jnp.ones((1,), dtype=jnp.float32)], axis=0)
 
 
 def main() -> None:
@@ -98,6 +111,7 @@ def main() -> None:
         "model": model_type,
         "train_loss": result.train_loss,
         "runtime_seconds": result.runtime_seconds,
+        "has_symmetry_metadata": bool(batch.symmetry_metadata["has_orbits"] or batch.symmetry_metadata["has_canonical_invariants"]),
         **batch.metadata,
         **diagnostics,
     }
