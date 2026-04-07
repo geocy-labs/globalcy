@@ -32,4 +32,6 @@ def evaluate_model(
     if symmetry_features is not None:
         symmetry_predictions = model_apply(params, symmetry_features)
         summary["symmetry_consistency"] = symmetry_consistency_score(predictions, symmetry_predictions)
+    else:
+        summary["symmetry_consistency"] = 0.0
     return summary

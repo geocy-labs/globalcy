@@ -75,6 +75,11 @@ def synthetic_bundle(tmp_path: Path) -> Path:
     invariants["case_id"] = "fermat_quartic"
     invariants["seed"] = 7
     invariants.to_parquet(bundle / "invariants.parquet", index=False)
+    canonical_invariants = invariants.copy()
+    for column in canonical_invariants.columns:
+        if column.startswith("m_") and column.endswith("_re"):
+            canonical_invariants[column] = canonical_invariants[column] * 0.95
+    canonical_invariants.to_parquet(bundle / "canonical_invariants.parquet", index=False)
 
     weights = pd.DataFrame(
         {
@@ -86,6 +91,18 @@ def synthetic_bundle(tmp_path: Path) -> Path:
         }
     )
     weights.to_parquet(bundle / "sample_weights.parquet", index=False)
+    orbits = pd.DataFrame(
+        {
+            "point_id": point_ids,
+            "canonical_key": [f"orbit_{idx // 2}" for idx in point_ids],
+            "orbit_size": np.array([2, 2, 3, 3, 4, 4], dtype=np.float32),
+            "group_size": np.array([24] * n, dtype=np.int32),
+            "geometry": ["fermat_quartic"] * n,
+            "case_id": ["fermat_quartic"] * n,
+            "seed": [7] * n,
+        }
+    )
+    orbits.to_parquet(bundle / "orbits.parquet", index=False)
 
     manifest = {
         "geometry": "fermat_quartic",
