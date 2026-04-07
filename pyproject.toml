@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "globalcy"
+version = "0.1.0"
+description = "JAX-native modeling framework for globally defined and symmetry-aware neural Kahler potentials."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "A. R." }]
+dependencies = [
+  "jax>=0.4.35",
+  "jaxlib>=0.4.35",
+  "numpy>=1.26",
+  "pandas>=2.2",
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3",
+]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
