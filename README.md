@@ -73,6 +73,27 @@ The comparison workflow writes:
 - `comparison_aggregated.csv`
 - `comparison_aggregated.md`
 
+## Paper-1 result freeze
+
+Use the Milestone 4 freeze command to turn the two multi-seed Cefalu comparison outputs into paper-facing tables, figures, and a short memo:
+
+```bash
+python -m globalcy.experiments.freeze_results ^
+  --comparison-dir outputs/cefalu_lambda_0p75_multiseed_ablation/comparison ^
+  --comparison-dir outputs/cefalu_lambda_1_multiseed_ablation/comparison ^
+  --out outputs/paper1_frozen_results
+```
+
+This writes:
+
+- `paper1_core_results.csv`
+- `paper1_core_results.md`
+- `paper1_robustness.csv`
+- `paper1_robustness.md`
+- `paper1_summary.md`
+- `fig_core_comparison.png`
+- `fig_hardest_case.png`
+
 ## Current diagnostics
 
 The current comparison layer surfaces:
@@ -85,14 +106,14 @@ The current comparison layer surfaces:
 
 ## Current limitations
 
-- Milestone 3 focuses on the two key hard Cefalu cases (`lambda = 0.75` and `lambda = 1.0`) rather than the full Paper-1 case matrix
+- the current reproducible comparison layer still focuses on the two key hard Cefalu cases (`lambda = 0.75` and `lambda = 1.0`) rather than the full Paper-1 case matrix
 - the symmetry-aware model is modest and inspectable rather than fully equivariant
 - the repo does not yet implement symbolic distillation
 - the repo does not yet implement moduli-dependent modeling
 - the repo does not yet implement singularity-aware asymptotic modeling
-- the repo does not yet provide a full paper-grade result-freeze / release layer
+- the current Paper-1 result-freeze layer is intentionally compact and is not yet a full release / validation framework
 - losses are intentionally simple and diagnostic-driven rather than final research losses
 
 ## Next step
 
-The next realistic milestone is a lightweight Paper-1 result-freeze and table-export layer built on top of the current multi-seed Cefalu benchmark outputs.
+The next realistic milestone is a lightweight validation and release pass for the frozen Paper-1 outputs so tables, figures, and summary artifacts can be checked and reused more systematically.
