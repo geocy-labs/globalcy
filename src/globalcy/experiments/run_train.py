@@ -113,6 +113,8 @@ def main() -> None:
         "runtime_seconds": result.runtime_seconds,
         "has_symmetry_metadata": bool(batch.symmetry_metadata["has_orbits"] or batch.symmetry_metadata["has_canonical_invariants"]),
         **batch.metadata,
+        "bundle_seed": batch.metadata.get("seed"),
+        "seed": config["training"]["seed"],
         **diagnostics,
     }
     provenance = {

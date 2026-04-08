@@ -1,0 +1,20 @@
+run_name: cefalu_lambda_0p75_multiseed
+bundle_path: "../geo-cy-data/outputs/cefalu_lambda_0_75"
+model:
+  type: global
+  hidden_dims: [64, 64]
+training:
+  seed: 7
+  seeds: [7, 11, 19]
+  epochs: 6
+  batch_size: 16
+  learning_rate: 0.001
+  train_fraction: 0.8
+loss:
+  target_weight: 1.0
+  determinant_weight: 0.1
+  positivity_weight: 0.05
+  chart_weight: 0.0
+  symmetry_weight: 0.05
+evaluation:
+  projective_scale: 1.7
