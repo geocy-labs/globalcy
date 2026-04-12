@@ -156,3 +156,4 @@ def test_freeze_results_outputs(tmp_path: Path):
     robustness = pd.read_csv(out_dir / "paper1_robustness.csv")
     assert set(core["model"]) == {"local", "global", "symmetry_aware"}
     assert robustness["seed_count"].min() == 3
+    assert not core["case"].astype(str).str.contains("Î").any()
