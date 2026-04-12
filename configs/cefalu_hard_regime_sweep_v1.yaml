@@ -1,0 +1,21 @@
+run_name: cefalu_hard_regime_sweep_v1
+benchmark_dir: "../geo-cy-data/runs/cefalu_hard_regime_sweep_v1"
+models: [local, global]
+training:
+  seed: 7
+  seeds: [7, 11, 19]
+  epochs: 6
+  batch_size: 16
+  learning_rate: 0.001
+  train_fraction: 0.8
+model:
+  type: global
+  hidden_dims: [64, 64]
+loss:
+  target_weight: 1.0
+  determinant_weight: 0.1
+  positivity_weight: 0.05
+  chart_weight: 0.0
+  symmetry_weight: 0.05
+evaluation:
+  projective_scale: 1.7

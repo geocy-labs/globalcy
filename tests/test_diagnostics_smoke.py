@@ -14,6 +14,8 @@ def test_diagnostics_smoke():
     positivity = positivity_summary(metrics)
     characteristic = characteristic_summary(metrics)
     assert positivity["negative_fraction"] == 0.0
+    assert positivity["spectral_tail_mean"] == positivity["min_eigenvalue_min"]
+    assert positivity["spectral_tail_mean"] <= positivity["min_eigenvalue_mean"]
     assert characteristic["determinant_mean"] > 0.0
 
 
@@ -29,6 +31,7 @@ def test_model_comparison_diagnostics_smoke():
                 "lambda": 0.75,
                 "train_loss": 1.0,
                 "negative_fraction": 0.2,
+                "spectral_tail_mean": 0.08,
                 "chart_consistency": 0.3,
                 "projective_invariance_drift": 0.4,
                 "symmetry_consistency": 0.5,
@@ -46,6 +49,7 @@ def test_model_comparison_diagnostics_smoke():
                 "lambda": 0.75,
                 "train_loss": 0.9,
                 "negative_fraction": 0.1,
+                "spectral_tail_mean": 0.14,
                 "chart_consistency": 0.2,
                 "projective_invariance_drift": 0.1,
                 "symmetry_consistency": 0.2,
@@ -58,6 +62,7 @@ def test_model_comparison_diagnostics_smoke():
     )
     assert list(frame["model"]) == ["global", "local"]
     assert aggregated.loc[aggregated["model"] == "global", "projective_invariance_drift_mean"].iloc[0] == 0.1
+    assert aggregated.loc[aggregated["model"] == "global", "spectral_tail_mean_mean"].iloc[0] == 0.14
     assert summary["best_by_metric"]["projective_invariance_drift"] == "global"
     assert any("best `projective_invariance_drift`" in line for line in lines)
 
@@ -74,6 +79,7 @@ def test_multiseed_aggregation_smoke():
                 "lambda": 1.0,
                 "train_loss": 1.2,
                 "negative_fraction": 0.2,
+                "spectral_tail_mean": 0.07,
                 "chart_consistency": 0.1,
                 "projective_invariance_drift": 0.4,
                 "symmetry_consistency": 0.0,
@@ -91,6 +97,7 @@ def test_multiseed_aggregation_smoke():
                 "lambda": 1.0,
                 "train_loss": 1.0,
                 "negative_fraction": 0.1,
+                "spectral_tail_mean": 0.09,
                 "chart_consistency": 0.2,
                 "projective_invariance_drift": 0.3,
                 "symmetry_consistency": 0.0,
@@ -103,6 +110,7 @@ def test_multiseed_aggregation_smoke():
     )
     assert aggregated["seed_count"].iloc[0] == 2
     assert summary["stability"]["projective_invariance_drift"]["mean"] > 0.0
+    assert summary["stability"]["spectral_tail_mean"]["mean"] > 0.0
 
 
 def test_comparison_output_files(tmp_path: Path, monkeypatch):
@@ -112,11 +120,11 @@ def test_comparison_output_files(tmp_path: Path, monkeypatch):
     run_a.mkdir()
     run_b.mkdir()
     (run_a / "metrics.json").write_text(
-        """{"seed": 7, "model": "local", "geometry": "cefalu_quartic", "case_id": "cefalu_lambda_0_75", "lambda": 0.75, "train_loss": 1.0, "negative_fraction": 0.2, "chart_consistency": 0.1, "projective_invariance_drift": 0.3, "symmetry_consistency": 0.0, "min_eigenvalue_mean": 0.1, "determinant_mean": 1.0, "euler_proxy": 0.2, "runtime_seconds": 2.0}""",
+        """{"seed": 7, "model": "local", "geometry": "cefalu_quartic", "case_id": "cefalu_lambda_0_75", "lambda": 0.75, "train_loss": 1.0, "negative_fraction": 0.2, "spectral_tail_mean": 0.08, "chart_consistency": 0.1, "projective_invariance_drift": 0.3, "symmetry_consistency": 0.0, "min_eigenvalue_mean": 0.1, "determinant_mean": 1.0, "euler_proxy": 0.2, "runtime_seconds": 2.0}""",
         encoding="utf-8",
     )
     (run_b / "metrics.json").write_text(
-        """{"seed": 11, "model": "global", "geometry": "cefalu_quartic", "case_id": "cefalu_lambda_0_75", "lambda": 0.75, "train_loss": 0.8, "negative_fraction": 0.1, "chart_consistency": 0.05, "projective_invariance_drift": 0.1, "symmetry_consistency": 0.2, "min_eigenvalue_mean": 0.15, "determinant_mean": 1.1, "euler_proxy": 0.25, "runtime_seconds": 2.1}""",
+        """{"seed": 11, "model": "global", "geometry": "cefalu_quartic", "case_id": "cefalu_lambda_0_75", "lambda": 0.75, "train_loss": 0.8, "negative_fraction": 0.1, "spectral_tail_mean": 0.14, "chart_consistency": 0.05, "projective_invariance_drift": 0.1, "symmetry_consistency": 0.2, "min_eigenvalue_mean": 0.15, "determinant_mean": 1.1, "euler_proxy": 0.25, "runtime_seconds": 2.1}""",
         encoding="utf-8",
     )
     monkeypatch.setattr(
