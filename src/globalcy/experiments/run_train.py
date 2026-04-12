@@ -92,6 +92,8 @@ def main() -> None:
         config=config,
         transform_inputs=_transform_for_model(model_type),
         symmetry_features=symmetry_features,
+        projective_homogeneous=batch.homogeneous[..., 0] + 1j * batch.homogeneous[..., 1],
+        projective_feature_builder=_projective_feature_builder(model_type),
     )
     diagnostics = evaluate_model(
         model_apply=apply_fn,
@@ -109,6 +111,7 @@ def main() -> None:
     run_dir.mkdir(parents=True, exist_ok=True)
     metrics = {
         "model": model_type,
+        "objective_variant": config.get("objective_variant", "default"),
         "train_loss": result.train_loss,
         "runtime_seconds": result.runtime_seconds,
         "has_symmetry_metadata": bool(batch.symmetry_metadata["has_orbits"] or batch.symmetry_metadata["has_canonical_invariants"]),
@@ -134,6 +137,7 @@ def main() -> None:
             f"# {config['run_name']}",
             "",
             f"- model: `{model_type}`",
+            f"- objective_variant: `{config.get('objective_variant', 'default')}`",
             f"- geometry: `{batch.metadata['geometry']}`",
             f"- case_id: `{batch.metadata['case_id']}`",
             f"- train_loss: `{result.train_loss:.6f}`",

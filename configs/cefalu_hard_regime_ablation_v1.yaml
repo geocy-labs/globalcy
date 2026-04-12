@@ -1,0 +1,43 @@
+run_name: cefalu_hard_regime_ablation_v1
+benchmark_dir: "../geo-cy-data/runs/cefalu_hard_regime_sweep_v1"
+cases:
+  - cefalu_lambda_0_90
+  - cefalu_lambda_1_0
+  - cefalu_lambda_1_10
+model:
+  type: global
+  hidden_dims: [64, 64]
+training:
+  seed: 7
+  seeds: [7, 11, 19]
+  epochs: 6
+  batch_size: 16
+  learning_rate: 0.001
+  train_fraction: 0.8
+loss:
+  target_weight: 1.0
+  determinant_weight: 0.1
+  negativity_weight: 0.0
+  projective_consistency_weight: 0.0
+  projective_consistency_scale: 1.7
+  chart_weight: 0.0
+  symmetry_weight: 0.0
+objective_variants:
+  - name: baseline
+    loss_overrides:
+      negativity_weight: 0.0
+      projective_consistency_weight: 0.0
+  - name: baseline_plus_negativity
+    loss_overrides:
+      negativity_weight: 0.05
+      projective_consistency_weight: 0.0
+  - name: baseline_plus_projective
+    loss_overrides:
+      negativity_weight: 0.0
+      projective_consistency_weight: 0.05
+  - name: baseline_plus_both
+    loss_overrides:
+      negativity_weight: 0.05
+      projective_consistency_weight: 0.05
+evaluation:
+  projective_scale: 1.7

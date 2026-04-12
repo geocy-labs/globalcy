@@ -18,6 +18,7 @@ COMPARISON_COLUMNS = [
     "lambda",
     "train_loss",
     "min_eigenvalue_mean",
+    "spectral_tail_mean",
     "negative_fraction",
     "chart_consistency",
     "projective_invariance_drift",
@@ -43,6 +44,7 @@ def aggregate_metrics(frame: pd.DataFrame) -> pd.DataFrame:
     numeric_columns = [
         "train_loss",
         "min_eigenvalue_mean",
+        "spectral_tail_mean",
         "negative_fraction",
         "chart_consistency",
         "projective_invariance_drift",
@@ -91,6 +93,7 @@ def compare_metrics(records: list[dict[str, Any]]) -> tuple[pd.DataFrame, pd.Dat
     numeric_columns = [
         "train_loss",
         "min_eigenvalue_mean",
+        "spectral_tail_mean",
         "negative_fraction",
         "chart_consistency",
         "projective_invariance_drift",

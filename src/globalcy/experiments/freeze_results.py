@@ -7,7 +7,7 @@ from pathlib import Path
 import pandas as pd
 
 from globalcy.reports.export import write_json, write_summary
-from globalcy.reports.figures import save_metric_bar_chart
+from globalcy.reports.figures import save_paper1_core_figure, save_paper1_hardest_case_figure
 
 
 CORE_COLUMNS = [
@@ -48,8 +48,8 @@ def build_core_results_table(aggregated: pd.DataFrame) -> pd.DataFrame:
     table = aggregated[CORE_COLUMNS].copy()
     table["case"] = table["case_id"].map(
         {
-            "cefalu_lambda_0_75": "Cefalu λ=0.75",
-            "cefalu_lambda_1_0": "Cefalu λ=1.0",
+            "cefalu_lambda_0_75": "Cefalu lambda=0.75",
+            "cefalu_lambda_1_0": "Cefalu lambda=1.0",
         }
     ).fillna(table["case_id"])
     return table[["case", "model", *[column for column in CORE_COLUMNS if column not in {"case_id", "model"}]]]
@@ -141,18 +141,8 @@ def freeze_results(comparison_dirs: list[str | Path], out_dir: str | Path) -> No
     write_markdown_table(out_path / "paper1_core_results.md", "Paper 1 Core Results", core_results)
     write_markdown_table(out_path / "paper1_robustness.md", "Paper 1 Robustness", robustness)
 
-    save_metric_bar_chart(
-        aggregated.assign(case_model=lambda frame: frame["case_id"] + " / " + frame["model"])[["case_model", "projective_invariance_drift_mean"]].rename(
-            columns={"projective_invariance_drift_mean": "metric"}
-        ),
-        "metric",
-        str(out_path / "fig_core_comparison.png"),
-        x_column="case_model",
-    )
-    hardest_case = aggregated.loc[aggregated["case_id"] == "cefalu_lambda_1_0", ["model", "negative_fraction_mean"]].rename(
-        columns={"negative_fraction_mean": "metric"}
-    )
-    save_metric_bar_chart(hardest_case, "metric", str(out_path / "fig_hardest_case.png"))
+    save_paper1_core_figure(aggregated, str(out_path / "fig_core_comparison.png"))
+    save_paper1_hardest_case_figure(aggregated, str(out_path / "fig_hardest_case.png"))
 
     memo_lines = build_results_memo(aggregated, robustness)
     write_summary(out_path / "paper1_summary.md", memo_lines)
@@ -179,3 +169,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

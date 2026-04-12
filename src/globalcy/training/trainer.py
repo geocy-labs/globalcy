@@ -46,9 +46,20 @@ def train_model(
     config: dict,
     transform_inputs,
     symmetry_features: jnp.ndarray | None = None,
+    projective_homogeneous: jnp.ndarray | None = None,
+    projective_feature_builder=None,
 ) -> TrainResult:
     targets = v_fs_logdet_target(affine_real)
-    loss_fn = make_loss_fn(model_apply, affine_real, targets, weights, config["loss"], transform_inputs=transform_inputs)
+    loss_fn = make_loss_fn(
+        model_apply,
+        affine_real,
+        targets,
+        weights,
+        config["loss"],
+        transform_inputs=transform_inputs,
+        projective_homogeneous=projective_homogeneous,
+        projective_feature_builder=projective_feature_builder,
+    )
     state = _adam_init(params)
     start = perf_counter()
 
