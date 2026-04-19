@@ -82,3 +82,48 @@ The key frozen ablation artifacts are:
 - `paper2_ablation_summary.md`
 
 These artifacts use the same diagnostic set as the regime sweep, but group results by objective variant rather than by model family.
+
+## Paper II paper-facing artifacts
+
+Once both frozen directories exist, regenerate manuscript-facing figures and tables from frozen outputs only:
+
+- `python -m globalcy.experiments.generate_paper2_artifacts --regime-frozen-dir outputs/cefalu_hard_regime_sweep_v1_regime_sweep/frozen --ablation-frozen-dir outputs/cefalu_hard_regime_ablation_v1_ablation/frozen --out outputs/cefalu_hard_regime_paper_artifacts`
+
+This workflow consumes:
+
+- `paper2_casewise_results.csv`
+- `paper2_sweep_results.csv`
+- `paper2_results.json`
+- `paper2_ablation_results.csv`
+- `per_objective_results.csv`
+- `hardest_case_ablation.csv`
+
+and writes:
+
+- figures in `outputs/<run_name>_paper_artifacts/figures/`
+- tables in `outputs/<run_name>_paper_artifacts/tables/`
+- `paper2_artifact_manifest.json`
+- `paper2_artifact_summary.md`
+
+The current paper-facing figures are:
+
+- `fig_paper2_diagnostic_trajectories.png`
+- `fig_paper2_degradation_profiles.png`
+- `fig_paper2_objective_ablation.png`
+- `fig_paper2_hardest_case.png`
+
+The current paper-facing tables are:
+
+- `table_paper2_core_sweep_results.csv`
+- `table_paper2_core_sweep_results.md`
+- `table_paper2_ablation_summary.csv`
+- `table_paper2_ablation_summary.md`
+- `table_paper2_degradation_summary.csv`
+- `table_paper2_degradation_summary.md`
+
+Degradation is derived from the frozen casewise sweep outputs with lambda ordered increasingly:
+
+- lower-is-better metrics use `end_value / start_value`
+- higher-is-better metrics use `start_value / end_value`
+
+That keeps deterioration ratios directionally aligned so values above `1.0` mean the model has degraded across the sweep.

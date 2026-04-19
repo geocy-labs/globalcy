@@ -17,6 +17,7 @@ The current repo supports:
 - running smoke and multi-seed ablations for the first reproducible Paper-1 comparison layer
 - running the Paper-II Cefalu hard-regime sweep over GeoCY benchmark presets
 - running geometry-aware objective ablations for the global model on the hardest Paper-II Cefalu cases
+- generating paper-facing Paper II figures and tables from frozen outputs only
 
 The current scientific focus is:
 
@@ -114,6 +115,19 @@ The negativity penalty is the mean positive part of the negative minimum eigenva
 
 The projective-consistency penalty is the mean absolute prediction drift under a fixed projective rescaling, using the same rescaling idea as the evaluation-time projective-invariance diagnostic.
 
+### Paper-II paper-artifact workflow
+
+Once the regime-sweep and objective-ablation frozen outputs exist, generate manuscript-facing figures and tables without rerunning training:
+
+```bash
+python -m globalcy.experiments.generate_paper2_artifacts ^
+  --regime-frozen-dir outputs/cefalu_hard_regime_sweep_v1_regime_sweep/frozen ^
+  --ablation-frozen-dir outputs/cefalu_hard_regime_ablation_v1_ablation/frozen ^
+  --out outputs/cefalu_hard_regime_paper_artifacts
+```
+
+This workflow consumes frozen outputs only and writes figures, tables, an artifact manifest, and a short summary memo.
+
 ## Current outputs
 
 Each run writes per-run reproducibility artifacts including:
@@ -157,6 +171,21 @@ The objective-ablation workflow writes a parallel manuscript-facing structure:
 - `outputs/<run_name>_ablation/frozen/paper2_ablation_results.csv`
 - `outputs/<run_name>_ablation/frozen/paper2_ablation_results.json`
 - `outputs/<run_name>_ablation/frozen/paper2_ablation_summary.md`
+
+The Paper II paper-artifact workflow writes:
+
+- `outputs/<run_name>_paper_artifacts/figures/fig_paper2_diagnostic_trajectories.png`
+- `outputs/<run_name>_paper_artifacts/figures/fig_paper2_degradation_profiles.png`
+- `outputs/<run_name>_paper_artifacts/figures/fig_paper2_objective_ablation.png`
+- `outputs/<run_name>_paper_artifacts/figures/fig_paper2_hardest_case.png`
+- `outputs/<run_name>_paper_artifacts/tables/table_paper2_core_sweep_results.csv`
+- `outputs/<run_name>_paper_artifacts/tables/table_paper2_core_sweep_results.md`
+- `outputs/<run_name>_paper_artifacts/tables/table_paper2_ablation_summary.csv`
+- `outputs/<run_name>_paper_artifacts/tables/table_paper2_ablation_summary.md`
+- `outputs/<run_name>_paper_artifacts/tables/table_paper2_degradation_summary.csv`
+- `outputs/<run_name>_paper_artifacts/tables/table_paper2_degradation_summary.md`
+- `outputs/<run_name>_paper_artifacts/paper2_artifact_manifest.json`
+- `outputs/<run_name>_paper_artifacts/paper2_artifact_summary.md`
 
 ## Paper-1 result freeze
 
@@ -204,6 +233,13 @@ The Paper-II regime sweep freezes, per run and in aggregate:
 `spectral_tail_mean` is the mean of the lowest-decile slice of the per-point minimum-eigenvalue distribution. `min_eigenvalue_mean` averages the minimum eigenvalue over the full sample, while `spectral_tail_mean` is more sensitive to hardest-case degradation in the lower tail.
 
 The objective-ablation artifacts freeze the same diagnostics, but organize them by objective variant for the global model rather than by model family across the full sweep.
+
+The degradation summary is derived from the frozen casewise results with lambda ordered increasingly:
+
+- for lower-is-better metrics (`negative_fraction`, `projective_invariance_drift`), deterioration ratio = `end_value / start_value`
+- for higher-is-better metrics (`spectral_tail_mean`), deterioration ratio = `start_value / end_value`
+
+So values above `1.0` indicate deterioration across the sweep in a directionally consistent way.
 
 ## Current limitations
 
