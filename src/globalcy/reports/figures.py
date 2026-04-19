@@ -28,11 +28,11 @@ MODEL_COLORS = {
 }
 
 CASE_LABELS = {
-    "cefalu_lambda_0_50": "Cefalu lambda=0.50",
-    "cefalu_lambda_0_75": "Cefalu lambda=0.75",
-    "cefalu_lambda_0_90": "Cefalu lambda=0.90",
-    "cefalu_lambda_1_0": "Cefalu lambda=1.0",
-    "cefalu_lambda_1_10": "Cefalu lambda=1.10",
+    "cefalu_lambda_0_50": "Cefalú lambda=0.50",
+    "cefalu_lambda_0_75": "Cefalú lambda=0.75",
+    "cefalu_lambda_0_90": "Cefalú lambda=0.90",
+    "cefalu_lambda_1_0": "Cefalú lambda=1.0",
+    "cefalu_lambda_1_10": "Cefalú lambda=1.10",
 }
 
 
@@ -46,12 +46,17 @@ def _case_label(case_id: str) -> str:
 
 def _case_title_label(case_id: str) -> str:
     return {
-        "cefalu_lambda_0_50": r"Cefalu $\lambda = .50$",
-        "cefalu_lambda_0_75": r"Cefalu $\lambda = .75$",
-        "cefalu_lambda_0_90": r"Cefalu $\lambda = .90$",
-        "cefalu_lambda_1_0": r"Cefalu $\lambda = 1.0$",
-        "cefalu_lambda_1_10": r"Cefalu $\lambda = 1.10$",
+        "cefalu_lambda_0_50": r"Cefalú $\lambda = .50$",
+        "cefalu_lambda_0_75": r"Cefalú $\lambda = .75$",
+        "cefalu_lambda_0_90": r"Cefalú $\lambda = .90$",
+        "cefalu_lambda_1_0": r"Cefalú $\lambda = 1.0$",
+        "cefalu_lambda_1_10": r"Cefalú $\lambda = 1.10$",
     }.get(case_id, _case_label(case_id))
+
+
+def _lambda_tick_labels(frame: pd.DataFrame) -> list[str]:
+    ordered = frame[["case_id", "lambda"]].drop_duplicates().sort_values(["lambda", "case_id"])
+    return [f"{float(value):.2f}" for value in ordered["lambda"].tolist()]
 
 
 def _case_order(frame: pd.DataFrame) -> list[str]:
@@ -134,7 +139,7 @@ def save_paper1_core_figure(frame: pd.DataFrame, path: str) -> None:
 
     handles, labels = axes[0].get_legend_handles_labels()
     figure.legend(handles, labels, loc="upper center", ncol=3, frameon=False, bbox_to_anchor=(0.5, 0.96))
-    figure.suptitle("Core comparison across hard Cefalu cases", fontsize=13, y=1.04)
+    figure.suptitle("Core comparison across hard Cefalú cases", fontsize=13, y=1.04)
     figure.subplots_adjust(top=0.82, wspace=0.25)
     figure.savefig(path, dpi=300, bbox_inches="tight")
     plt.close(figure)
@@ -191,6 +196,7 @@ def save_paper2_diagnostic_trajectories(frame: pd.DataFrame, path: str) -> None:
 
     ordered = frame.sort_values(["lambda", "model"]).reset_index(drop=True)
     cases = _case_order(ordered)
+    lambda_labels = _lambda_tick_labels(ordered)
     x_positions = list(range(len(cases)))
     figure, axes = plt.subplots(1, 3, figsize=(15.5, 4.8))
     metrics = [
@@ -217,7 +223,8 @@ def save_paper2_diagnostic_trajectories(frame: pd.DataFrame, path: str) -> None:
         axis.set_title(ylabel, fontsize=11)
         axis.set_ylabel(ylabel)
         axis.set_xticks(x_positions)
-        axis.set_xticklabels([_case_label(case_id) for case_id in cases], rotation=12, ha="right")
+        axis.set_xticklabels(lambda_labels)
+        axis.set_xlabel(r"Cefalú ($\lambda=$)")
         axis.grid(axis="y", alpha=0.25, linewidth=0.7)
         axis.set_axisbelow(True)
         if use_log:
@@ -225,7 +232,7 @@ def save_paper2_diagnostic_trajectories(frame: pd.DataFrame, path: str) -> None:
 
     handles, labels = axes[0].get_legend_handles_labels()
     figure.legend(handles, labels, loc="upper center", ncol=max(len(labels), 1), frameon=False, bbox_to_anchor=(0.5, 0.98))
-    figure.suptitle("GlobalCY II diagnostic trajectories across the Cefalu hard-regime sweep", fontsize=13, y=1.05)
+    figure.suptitle("GlobalCY II diagnostic trajectories across the Cefalú hard-regime sweep", fontsize=13, y=1.05)
     figure.subplots_adjust(top=0.8, wspace=0.28)
     figure.savefig(path, dpi=300, bbox_inches="tight")
     plt.close(figure)
@@ -236,6 +243,7 @@ def save_paper2_degradation_profiles(frame: pd.DataFrame, path: str) -> None:
 
     ordered = frame.sort_values(["lambda", "model"]).reset_index(drop=True)
     cases = _case_order(ordered)
+    lambda_labels = _lambda_tick_labels(ordered)
     x_positions = list(range(len(cases)))
     figure, axes = plt.subplots(1, 3, figsize=(15.5, 4.8))
     metrics = [
@@ -264,14 +272,15 @@ def save_paper2_degradation_profiles(frame: pd.DataFrame, path: str) -> None:
         axis.set_title(title, fontsize=11)
         axis.set_ylabel("Relative deterioration vs lambda=0.50")
         axis.set_xticks(x_positions)
-        axis.set_xticklabels([_case_label(case_id) for case_id in cases], rotation=12, ha="right")
+        axis.set_xticklabels(lambda_labels)
+        axis.set_xlabel(r"Cefalú ($\lambda=$)")
         axis.axhline(1.0, linestyle="--", linewidth=0.8, color="#666666")
         axis.grid(axis="y", alpha=0.25, linewidth=0.7)
         axis.set_axisbelow(True)
 
     handles, labels = axes[0].get_legend_handles_labels()
     figure.legend(handles, labels, loc="upper center", ncol=max(len(labels), 1), frameon=False, bbox_to_anchor=(0.5, 0.98))
-    figure.suptitle("GlobalCY II degradation profiles across the Cefalu hard-regime sweep", fontsize=13, y=1.05)
+    figure.suptitle("GlobalCY II degradation profiles across the Cefalú hard-regime sweep", fontsize=13, y=1.05)
     figure.subplots_adjust(top=0.8, wspace=0.28)
     figure.savefig(path, dpi=300, bbox_inches="tight")
     plt.close(figure)
