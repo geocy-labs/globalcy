@@ -1,0 +1,127 @@
+{
+  "title": "GCY2-BLOB-02B_safe_minimal_rerun_with_pointwise_exports",
+  "expected_run_count": 42,
+  "successful_run_count": 42,
+  "failed_run_count": 0,
+  "required_pointwise_fields": [
+    "point_id",
+    "case_id",
+    "model_name",
+    "seed",
+    "prediction",
+    "target",
+    "min_eigenvalue",
+    "determinant_g",
+    "logdet_g",
+    "quadrature_weight",
+    "logdet_target",
+    "logdet_residual_proxy",
+    "negative_flag",
+    "euler_density_proxy"
+  ],
+  "output_roots": {
+    "sweep_root": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_sweep_v1_regime_sweep_pointwise_safe_minimal",
+    "ablation_root": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_ablation_v1_cefalu_1_0_pointwise_safe_minimal"
+  },
+  "artifacts": {
+    "run_index_csv": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\artifacts\\paper2_pointwise_diagnostics_run_index.csv",
+    "residual_summary_csv": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\artifacts\\paper2_residual_summary.csv",
+    "report_md": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\docs\\paper2_safe_minimal_rerun_report.md"
+  },
+  "validation": {
+    "schema_issues": [],
+    "numerical_issues": [
+      {
+        "run_dir": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_sweep_v1_regime_sweep_pointwise_safe_minimal\\runs\\cefalu_lambda_0_50\\seed_11\\global",
+        "issue": "negative_fraction_mismatch",
+        "metrics_value": 0.11999999731779099,
+        "pointwise_value": 0.12,
+        "abs_diff": 2.682209010451686e-09,
+        "tolerance": 1e-09
+      },
+      {
+        "run_dir": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_sweep_v1_regime_sweep_pointwise_safe_minimal\\runs\\cefalu_lambda_0_90\\seed_11\\local",
+        "issue": "negative_fraction_mismatch",
+        "metrics_value": 0.02499999850988388,
+        "pointwise_value": 0.025,
+        "abs_diff": 1.4901161207725444e-09,
+        "tolerance": 1e-09
+      },
+      {
+        "run_dir": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_sweep_v1_regime_sweep_pointwise_safe_minimal\\runs\\cefalu_lambda_0_90\\seed_11\\global",
+        "issue": "negative_fraction_mismatch",
+        "metrics_value": 0.09999999403953552,
+        "pointwise_value": 0.1,
+        "abs_diff": 5.960464483090178e-09,
+        "tolerance": 1e-09
+      },
+      {
+        "run_dir": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_sweep_v1_regime_sweep_pointwise_safe_minimal\\runs\\cefalu_lambda_0_90\\seed_19\\global",
+        "issue": "negative_fraction_mismatch",
+        "metrics_value": 0.02499999850988388,
+        "pointwise_value": 0.025,
+        "abs_diff": 1.4901161207725444e-09,
+        "tolerance": 1e-09
+      },
+      {
+        "run_dir": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_sweep_v1_regime_sweep_pointwise_safe_minimal\\runs\\cefalu_lambda_1_0\\seed_11\\global",
+        "issue": "negative_fraction_mismatch",
+        "metrics_value": 0.08999999612569809,
+        "pointwise_value": 0.09,
+        "abs_diff": 3.8743019070697216e-09,
+        "tolerance": 1e-09
+      },
+      {
+        "run_dir": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_sweep_v1_regime_sweep_pointwise_safe_minimal\\runs\\cefalu_lambda_1_10\\seed_11\\global",
+        "issue": "negative_fraction_mismatch",
+        "metrics_value": 0.07999999821186066,
+        "pointwise_value": 0.08,
+        "abs_diff": 1.7881393449270533e-09,
+        "tolerance": 1e-09
+      },
+      {
+        "run_dir": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_sweep_v1_regime_sweep_pointwise_safe_minimal\\runs\\cefalu_lambda_1_10\\seed_19\\global",
+        "issue": "negative_fraction_mismatch",
+        "metrics_value": 0.02499999850988388,
+        "pointwise_value": 0.025,
+        "abs_diff": 1.4901161207725444e-09,
+        "tolerance": 1e-09
+      },
+      {
+        "run_dir": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_ablation_v1_cefalu_1_0_pointwise_safe_minimal\\runs\\cefalu_lambda_1_0\\seed_11\\baseline",
+        "issue": "negative_fraction_mismatch",
+        "metrics_value": 0.08999999612569809,
+        "pointwise_value": 0.09,
+        "abs_diff": 3.8743019070697216e-09,
+        "tolerance": 1e-09
+      },
+      {
+        "run_dir": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_ablation_v1_cefalu_1_0_pointwise_safe_minimal\\runs\\cefalu_lambda_1_0\\seed_11\\baseline_plus_negativity",
+        "issue": "negative_fraction_mismatch",
+        "metrics_value": 0.08999999612569809,
+        "pointwise_value": 0.09,
+        "abs_diff": 3.8743019070697216e-09,
+        "tolerance": 1e-09
+      },
+      {
+        "run_dir": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_ablation_v1_cefalu_1_0_pointwise_safe_minimal\\runs\\cefalu_lambda_1_0\\seed_11\\baseline_plus_projective",
+        "issue": "negative_fraction_mismatch",
+        "metrics_value": 0.08999999612569809,
+        "pointwise_value": 0.09,
+        "abs_diff": 3.8743019070697216e-09,
+        "tolerance": 1e-09
+      },
+      {
+        "run_dir": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_ablation_v1_cefalu_1_0_pointwise_safe_minimal\\runs\\cefalu_lambda_1_0\\seed_11\\baseline_plus_both",
+        "issue": "negative_fraction_mismatch",
+        "metrics_value": 0.08999999612569809,
+        "pointwise_value": 0.09,
+        "abs_diff": 3.8743019070697216e-09,
+        "tolerance": 1e-09
+      }
+    ],
+    "negative_fraction_tolerance": 1e-09,
+    "ready_for_fragile_sector_join": true
+  },
+  "failed_runs": []
+}

@@ -1,0 +1,182 @@
+{
+  "title": "GCY2-BLOB-00_artifact_audit_for_degeneration_extension",
+  "status": "audit_only",
+  "goal": "Determine the minimum additional computation needed to support degeneration-sensitive family profiles, local fragile-sector decomposition, regionwise class-shadow quantities, residual proxies, coupling/non-freeness analysis, and an optional pilot scalar Laplace spectrum.",
+  "repos": {
+    "globalcy_root": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy",
+    "geocydata_root": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\geo-cy-data"
+  },
+  "existing_artifacts": {
+    "geocydata_benchmark_root": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\geo-cy-data\\runs\\cefalu_hard_regime_sweep_v1",
+    "globalcy_sweep_root": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_sweep_v1_regime_sweep",
+    "globalcy_ablation_root": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_ablation_v1_ablation"
+  },
+  "questions": {
+    "per_point_sampled_geometry_exists": true,
+    "per_point_metric_side_outputs_exist": false,
+    "pointwise_min_eigenvalue_recoverable_without_rerun": false,
+    "pointwise_learned_determinant_available": false,
+    "pointwise_euler_proxy_density_available": false,
+    "geometry_side_residuals_recoverable_offline": true
+  },
+  "what_exists_already": {
+    "geocydata_pointwise_files": [
+      "points.parquet",
+      "invariants.parquet",
+      "sample_weights.parquet",
+      "canonical_representatives.parquet",
+      "canonical_invariants.parquet",
+      "orbits.parquet"
+    ],
+    "globalcy_pointwise_files": [
+      "predictions.parquet"
+    ],
+    "globalcy_prediction_columns": [
+      "point_id",
+      "prediction",
+      "target"
+    ],
+    "globalcy_aggregate_metrics": [
+      "negative_fraction",
+      "min_eigenvalue_mean",
+      "spectral_tail_mean",
+      "projective_invariance_drift",
+      "chart_consistency",
+      "determinant_mean",
+      "euler_proxy",
+      "runtime_seconds"
+    ]
+  },
+  "missing_for_extension": [
+    "pointwise minimum-eigenvalue traces",
+    "pointwise determinant traces",
+    "pointwise log-determinant traces",
+    "pointwise Euler-style density traces",
+    "pointwise learned fragile-sector labels",
+    "regionwise class-shadow quantities",
+    "coupling/non-freeness diagnostics",
+    "scalar Laplace operator or spectrum exports"
+  ],
+  "checkpoint_reuse_assessment": {
+    "safe_posthoc_reloading_supported": false,
+    "reason": "params.npz stores only raw tree leaves without a saved pytree structure or restore helper."
+  },
+  "recommended_new_export": {
+    "filename": "pointwise_diagnostics.parquet",
+    "minimum_columns": [
+      "point_id",
+      "min_eigenvalue",
+      "determinant",
+      "log_determinant",
+      "is_negative"
+    ],
+    "optional_columns": [
+      "hermitian_residual"
+    ]
+  },
+  "minimum_rerun_matrix": {
+    "safe_minimal_path": {
+      "sweep": {
+        "cases": [
+          "cefalu_lambda_0_50",
+          "cefalu_lambda_0_75",
+          "cefalu_lambda_0_90",
+          "cefalu_lambda_1_0",
+          "cefalu_lambda_1_10"
+        ],
+        "models": [
+          "local",
+          "global"
+        ],
+        "seeds": [
+          7,
+          11,
+          19
+        ],
+        "run_count": 30
+      },
+      "ablation": {
+        "cases": [
+          "cefalu_lambda_1_0"
+        ],
+        "objective_variants": [
+          "baseline",
+          "baseline_plus_negativity",
+          "baseline_plus_projective",
+          "baseline_plus_both"
+        ],
+        "seeds": [
+          7,
+          11,
+          19
+        ],
+        "run_count": 12
+      },
+      "total_run_count": 42
+    },
+    "stronger_path": {
+      "sweep": {
+        "cases": [
+          "cefalu_lambda_0_50",
+          "cefalu_lambda_0_75",
+          "cefalu_lambda_0_90",
+          "cefalu_lambda_1_0",
+          "cefalu_lambda_1_10"
+        ],
+        "models": [
+          "local",
+          "global"
+        ],
+        "seeds": [
+          7,
+          11,
+          19
+        ],
+        "run_count": 30
+      },
+      "ablation": {
+        "cases": [
+          "cefalu_lambda_0_90",
+          "cefalu_lambda_1_0",
+          "cefalu_lambda_1_10"
+        ],
+        "objective_variants": [
+          "baseline",
+          "baseline_plus_negativity",
+          "baseline_plus_projective",
+          "baseline_plus_both"
+        ],
+        "seeds": [
+          7,
+          11,
+          19
+        ],
+        "run_count": 36
+      },
+      "optional_scalar_laplace_pilot_cases": [
+        "cefalu_lambda_1_0",
+        "cefalu_lambda_1_10"
+      ],
+      "total_run_count": 66
+    }
+  },
+  "safe_minimal_path": [
+    "Add a narrow pointwise learned-metric export to the current run path.",
+    "Rerun the 30-run full sweep matrix with the new export enabled.",
+    "Rerun the 12-run cefalu_lambda_1_0 ablation subset with the same export enabled.",
+    "Compute geometry-side residual proxies offline from existing GeoCYData point samples."
+  ],
+  "stronger_path": [
+    "Add the same pointwise export hook.",
+    "Rerun the full 30-run sweep matrix.",
+    "Rerun the 36-run three-case ablation matrix.",
+    "Build regionwise postprocessing over charts, orbits, weights, and fragile lower-tail sectors.",
+    "Prototype coupling/non-freeness summaries from regionwise decompositions.",
+    "Consider a one-case or two-case scalar Laplace pilot only after the pointwise diagnostic layer exists."
+  ],
+  "exact_paths_to_use": {
+    "geocydata_bundle_template": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\geo-cy-data\\runs\\cefalu_hard_regime_sweep_v1\\bundles\\<case_id>\\seed_<seed>",
+    "globalcy_sweep_run_template": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_sweep_v1_regime_sweep\\runs\\<case_id>\\seed_<seed>\\<model>",
+    "globalcy_ablation_run_template": "C:\\Users\\fearl\\OneDrive\\Documents\\ar\\globalcy\\outputs\\cefalu_hard_regime_ablation_v1_ablation\\runs\\<case_id>\\seed_<seed>\\<objective_variant>"
+  }
+}

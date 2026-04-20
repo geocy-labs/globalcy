@@ -28,3 +28,8 @@ def write_predictions(path: Path, point_ids: np.ndarray, predictions: np.ndarray
         }
     )
     frame.to_parquet(path, index=False)
+
+
+def write_pointwise_diagnostics(path: Path, frame: pd.DataFrame) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    frame.to_parquet(path, index=False)

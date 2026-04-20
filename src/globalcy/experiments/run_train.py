@@ -13,7 +13,7 @@ from globalcy.geometry.projective import homogeneous_to_affine_real, homogeneous
 from globalcy.models.phi_global_invariant import apply_global_invariant_phi, init_global_invariant_phi
 from globalcy.models.phi_local_mlp import apply_local_mlp, init_local_mlp
 from globalcy.models.phi_symmetry_aware import apply_symmetry_aware_phi, init_symmetry_aware_phi
-from globalcy.reports.export import write_json, write_predictions, write_summary
+from globalcy.reports.export import write_json, write_pointwise_diagnostics, write_predictions, write_summary
 from globalcy.training.eval import evaluate_model
 from globalcy.training.trainer import train_model
 from globalcy.utils.config import load_config
@@ -99,11 +99,16 @@ def main() -> None:
         model_apply=apply_fn,
         params=result.params,
         features=features,
+        targets=result.targets,
         affine_real=affine_real,
         homogeneous=batch.homogeneous[..., 0] + 1j * batch.homogeneous[..., 1],
         point_ids=jnp.asarray(batch.point_ids),
+        weights=batch.weights,
         transform_inputs=_transform_for_model(model_type),
         projective_feature_builder=_projective_feature_builder(model_type),
+        case_id=str(batch.metadata["case_id"]),
+        model_name=model_type,
+        seed=int(config["training"]["seed"]),
         symmetry_features=symmetry_features,
     )
 
@@ -118,7 +123,7 @@ def main() -> None:
         **batch.metadata,
         "bundle_seed": batch.metadata.get("seed"),
         "seed": config["training"]["seed"],
-        **diagnostics,
+        **diagnostics.summary,
     }
     provenance = {
         "config": config,
@@ -131,6 +136,7 @@ def main() -> None:
     write_json(run_dir / "metrics.json", metrics)
     np.savez(run_dir / "params.npz", *jax.tree_util.tree_leaves(result.params))
     write_predictions(run_dir / "predictions.parquet", batch.point_ids, np.asarray(result.predictions), np.asarray(result.targets))
+    write_pointwise_diagnostics(run_dir / "pointwise_diagnostics.parquet", diagnostics.pointwise)
     write_summary(
         run_dir / "summary.md",
         [
@@ -143,6 +149,7 @@ def main() -> None:
             f"- train_loss: `{result.train_loss:.6f}`",
             f"- min_eigenvalue_mean: `{metrics['min_eigenvalue_mean']:.6f}`",
             f"- projective_invariance_drift: `{metrics['projective_invariance_drift']:.6f}`",
+            "- pointwise diagnostics: `pointwise_diagnostics.parquet`",
         ],
     )
     print(f"Wrote run outputs to {run_dir}")
